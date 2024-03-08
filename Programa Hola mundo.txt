@@ -1,0 +1,44 @@
+<?php
+
+// Nombre del estudiante
+$nombre = "TuNombreAquí";
+
+// Función para generar una imagen con Leonardo IA
+function generarImagenLeonardo($texto) {
+    $url = "https://api.openai.com/v1/images";
+    $apiKey = "TuClaveDeAPIAquí";
+    $data = array(
+        "prompt" => $texto,
+        "max_tokens" => 50,
+        "model" => "text-davinci-003",
+        "return_attributes" => "image"
+    );
+
+    $options = array(
+        'http' => array(
+            'header' => "Content-Type: application/json\r\nAuthorization: Bearer " . $apiKey,
+            'method' => 'POST',
+            'content' => json_encode($data)
+        )
+    );
+
+    $context = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+
+    if ($result === FALSE) {
+        return false;
+    } else {
+        $result = json_decode($result, true);
+        return $result['choices'][0]['attributes']['image'];
+    }
+}
+
+// Generar la imagen con Leonardo IA
+$imagenBase64 = generarImagenLeonardo("Una imagen generada con inteligencia artificial.");
+
+// Mostrar la imagen
+echo '<img src="data:image/jpeg;base64,' . $imagenBase64 . '" alt="Imagen generada por Leonardo AI"/>';
+
+// Mostrar el mensaje "Hola mundo, soy [nombre del estudiante]"
+echo "<h1>Hola mundo, soy $nombre</h1>";
+?>
